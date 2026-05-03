@@ -1,0 +1,28 @@
+data:
+  n_jobs: 30
+  n_layers: 400
+  nozzle_temp_nominal: 215.0
+  bed_temp_nominal: 60.0
+  extruder_current_nominal: 1.2
+  target_layer_height: 0.2
+  print_speed_nominal: 100.0
+  ambient_temp_nominal: 26.0
+  random_seed: 42
+  output_path: data/print_fleet.csv
+
+model:
+  n_estimators: 300
+  max_depth: 4
+  learning_rate: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+  random_state: 42
+  test_size: 0.20
+  rolling_window: 10
+  zscore_window: 30
+  zscore_threshold: 3.0
+  model_output_path: models/
+
+dashboard:
+  page_title: "3D Print Process Monitor"
+  default_health_warning_threshold: 55
