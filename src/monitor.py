@@ -13,7 +13,9 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from pathlib import Path
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.metrics import classification_report
@@ -154,6 +156,26 @@ class PrintMonitor:
             if col in df.columns:
                 names += [f"{col}_mean", f"{col}_std"]
         return names
+
+    def save(self, path: str | Path) -> None:
+        """Persist the trained monitor to disk."""
+        if not self._trained:
+            raise RuntimeError("Nothing to save — call fit() first.")
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump({"clf": self._clf, "le": self._le, "window": self.window}, path)
+        logger.info("Monitor saved to %s", path)
+
+    @classmethod
+    def load(cls, path: str | Path) -> "PrintMonitor":
+        """Load a previously saved monitor from disk."""
+        data = joblib.load(path)
+        obj = cls.__new__(cls)
+        obj._clf = data["clf"]
+        obj._le = data["le"]
+        obj.window = data["window"]
+        obj._trained = True
+        return obj
 
     def _zscore_anomaly(self, df: pd.DataFrame, threshold: float = 3.0) -> pd.Series:
         """Flag layers where any sensor deviates > threshold sigma (rolling)."""
